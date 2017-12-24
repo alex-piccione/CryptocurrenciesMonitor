@@ -1,3 +1,4 @@
+from typing import Dict
 from urllib.request import urlopen
 from datetime import datetime
 from bs4 import BeautifulSoup
@@ -8,11 +9,11 @@ from cryptocurrencies.entities import Exchange, Market
 
 class WebScraper():
 
-    def __init__(self, writer:FileWriter, filters=None):
+    def __init__(self, writer:FileWriter, filters=None) -> Dict[str, Exchange]:
         self.writer = writer
         self.filters = filters
 
-    def run(self, filters=None):
+    def get_data(self, filters=None) :
 
         try:
             base_url = "https://coinmarketcap.com"
@@ -32,13 +33,15 @@ class WebScraper():
                 for market in exchange.markets.values():
                     self.writer.write(f"\t{market.name}: {market.price}")
 
+            return exchanges
+
         except Exception as error:
             self.writer.write(f"Error in {__name__}. {error}")
             print(f"Error in {__name__}. {error}")
             return 1  # Fatal error
 
 
-    def _get_exchanges(self, bs: BeautifulSoup):
+    def _get_exchanges(self, bs: BeautifulSoup) -> Dict[str, Exchange]:
 
         # table: <table id="markets-table" class="table no-border table-condensed">
         table = bs.find("table", {"id":"markets-table"})

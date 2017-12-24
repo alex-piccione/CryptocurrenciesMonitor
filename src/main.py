@@ -1,5 +1,8 @@
 import os
+
+from UI.Configuration import Configuration
 from cryptocurrencies.WebScraper import WebScraper
+from utils.ConfigurationManager import ConfigurationManager
 from utils.FileWriter import FileWriter
 from UI.MainWindow import MainWindow
 
@@ -10,7 +13,8 @@ def main():
     destination_file = os.path.join(current_dir, "output", file_name)
     writer = FileWriter(destination_file)
     scraper = WebScraper(writer)    
-    MainWindow(writer, scraper)    
+    configuration = ConfigurationManager.load_configuration()
+    MainWindow(configuration, writer, scraper)    
 
 if __name__ == "__main__":
     
