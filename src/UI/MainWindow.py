@@ -58,17 +58,18 @@ class MainWindow:
     def _create_central_frame(self):
 
         table_width = 600
-        table_height = 400
+        table_height = 200
 
         # ScrollBar cannot be associated to root widget and Frame, using canvas is the common solution
-        canvas = UI.create_Canvas(self.tk, self.theme_name,)
-        canvas.grid(row=1, column=0, padx=5)        
+        canvas = UI.create_Canvas(self.tk, self.theme_name)
+        canvas.grid(row=1, column=0, padx=5)             
         scrollbar = Scrollbar(self.tk, orient=VERTICAL, command=canvas.yview)
-        scrollbar.grid(row=1, column=0, sticky="nse") 
-        frame = Frame(canvas, width=600)
-        
+        scrollbar.grid(row=1, column=1, sticky="nse")         
+        frame = Frame(canvas)
+         
         canvas.configure(yscrollcommand=scrollbar.set)
         canvas.create_window((0,0), window=frame, anchor="nw")
+
         def resize(event):
             canvas.configure(scrollregion=canvas.bbox("all"), width=table_width, height=table_height)
         frame.bind("<Configure>", resize)
@@ -118,7 +119,7 @@ class MainWindow:
     def _create_cell(self, table, row, column, text, sticky):
         if row % 2 == 0 : style = ["table_cell.TFrame", "table_cell.TLabel"]
         else: style = ["table_cell_alt.TFrame", "table_cell_alt.TLabel"]
-        cell = Frame(table, style=style[0], width=175, height=20)        
+        cell = Frame(table, style=style[0], width=178, height=20)        
         cell.grid_propagate(0)
         #cell = Frame(table, style=style[0])        
         cell.grid(row=row, column=column, sticky="nswe", padx=0.5, pady=0.5, ipadx=10)
