@@ -9,9 +9,8 @@ from cryptocurrencies.entities import Exchange, Market
 
 class WebScraper():
 
-    def __init__(self, writer:FileWriter, filters=None) -> Dict[str, Exchange]:
+    def __init__(self, writer:FileWriter) -> Dict[str, Exchange]:
         self.writer = writer
-        self.filters = filters
 
     def get_data(self, filters=None) :
 
@@ -21,7 +20,7 @@ class WebScraper():
             response = urlopen(url)
             bs = BeautifulSoup(response, "html5lib")
 
-            exchanges = self._get_exchanges(bs)
+            exchanges = self._get_exchanges(bs, filters)
 
             # how to filter a dictionary https://stackoverflow.com/questions/2844516/how-to-filter-a-dictionary-according-to-an-arbitrary-condition-function
 
@@ -33,7 +32,7 @@ class WebScraper():
             return 1  # Fatal error
 
 
-    def _get_exchanges(self, bs: BeautifulSoup) -> List[Exchange]:
+    def _get_exchanges(self, bs: BeautifulSoup, filters) -> List[Exchange]:
 
         # table: <table id="markets-table" class="table no-border table-condensed">
         table = bs.find("table", {"id":"markets-table"})
@@ -55,9 +54,9 @@ class WebScraper():
             exchange_name = td_list[1].get_text()
             market_currencies = td_list[2].get_text()   
             
-            if self.filters:
-                if ("exchanges" in self.filters and exchange_name not in self.filters["exchanges"]) \
-                or ("markets" in self.filters and market_currencies not in self.filters["markets"]):
+            if filters:
+                if ("exchanges" in filters and exchange_name not in filters["exchanges"]) \
+                or ("markets" in filters and market_currencies not in filters["markets"]):
                     continue
 
             
