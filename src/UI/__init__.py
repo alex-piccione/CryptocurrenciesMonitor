@@ -5,9 +5,12 @@ from tkinter.ttk import *
 class Dark:
 
     def __init__(self):
-        color_1 = "#222"  # background
+        color_1 = "#1F1F1F"  # background
         color_3 = "#666"  # controls background
         color_2 = "#CCC"  # foreground, text
+
+        color_4 = "#292929"
+        color_5 = "#202020"  # alternate
 
         self.frame_background = color_1
 
@@ -19,7 +22,8 @@ class Dark:
 
         self.control_background = color_3
 
-        self.table_cell_background = color_1
+        self.table_cell_background = color_4
+        self.table_cell_background_2 = color_5
         self.table_cell_foreground = color_2
 
 def get_theme(theme_name:str):
@@ -45,6 +49,7 @@ def set_style(theme_name:str, window):
     # font=("Helvetica", 16)
 
     style.configure("table_cell.TLabel", background=theme.table_cell_background, foreground=theme.table_cell_foreground)
+    style.configure("table_cell_2.TLabel", background=theme.table_cell_background_2, foreground=theme.table_cell_foreground) # alternate
     style.configure("table_cell.TFrame", background=theme.table_cell_background, foreground=theme.table_cell_foreground)
 
     #style.configure(f'{theme}.TButton', foreground='black', background='gray')              

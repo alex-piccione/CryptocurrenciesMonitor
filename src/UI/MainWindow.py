@@ -20,7 +20,7 @@ class MainWindow:
 
         self.tk = Tk()
         self.tk.title("Cryptocurrency Monitor")
-        # set it as non-resizable
+        self.tk.resizable(False, False)
         #self.width=400
         #self.height=500
         #self.tk.geometry(f"{self.width}x{self.height}")
@@ -57,25 +57,21 @@ class MainWindow:
 
     def _create_central_frame(self):
 
+        table_width = 600
+        table_height = 400
+
         # ScrollBar cannot be associated to root widget and Frame, using canvas is the common solution
         canvas = UI.create_Canvas(self.tk, self.theme_name,)
-        canvas.grid(row=1, column=0, columnspan=3)        
+        canvas.grid(row=1, column=0, padx=5)        
         scrollbar = Scrollbar(self.tk, orient=VERTICAL, command=canvas.yview)
-        scrollbar.grid(row=1, column=3, sticky="ns")        
+        scrollbar.grid(row=1, column=0, sticky="nse")       # columnspan is not needed but stick the scrollbar on the right
         frame = Frame(canvas)
         
         canvas.configure(yscrollcommand=scrollbar.set)
         canvas.create_window((0,0), window=frame, anchor="nw")
         def resize(event):
-            canvas.configure(scrollregion=canvas.bbox("all"), width=600, height=400)
+            canvas.configure(scrollregion=canvas.bbox("all"), width=table_width, height=table_height)
         frame.bind("<Configure>", resize)
-
-        #frame.grid(row=1, column=0, padx=5, pady=5)
-        #frame.config(height = 400, width=600)
-        #frame.grid_propagate(0)        
-        
-        #scroll = Scrollbar(self.central_frame)
-        #scroll.grid(row=1, column=0, padx=5, pady=5)
 
         self.central_frame = frame # set it visible
 
@@ -86,10 +82,10 @@ class MainWindow:
 
         self.refresh_button = UI.create_button(frame, self.theme_name, "Refresh", command=self._load_data)
         #pad = {"padx":10, "pady":10}
-        self.refresh_button.grid(row=0, column=0, padx=10, pady=10, ipadx=20)
+        self.refresh_button.grid(row=0, column=0, padx=5, pady=5, ipadx=10)
 
         quit_button = UI.create_button(frame, self.theme_name, text="Quit", command=self._quit)
-        quit_button.grid(row=0, column=1, sticky=SE, padx=10, pady=10, ipadx=20)
+        quit_button.grid(row=0, column=1, sticky=SE, padx=5, pady=5, ipadx=10)
 
     def _load_data(self):
 
@@ -107,16 +103,20 @@ class MainWindow:
         #table = Treeview(self.central_frame)
         table = Frame(self.central_frame, style="table.TFrame")
 
+        cell_pad=0.5
+
         row = 0
         for exchange in exchanges:
             for market in exchange.markets.values():
-                exchange_cell = Label(table, text=exchange.name, style="table_cell.TLabel", borderwidth="20m")
-                market_cell = Label(table, text=market.name, style="table_cell.TLabel", borderwidth="20m")
-                price_cell = Label(table, text=market.price, style="table_cell.TLabel", borderwidth="20m")
+                if row % 2 == 0 : style = "table_cell.TLabel" 
+                else: style = "table_cell_2.TLabel" 
+                exchange_cell = Label(table, text=exchange.name, style=style)
+                market_cell = Label(table, text=market.name, style=style)
+                price_cell = Label(table, text=market.price, style=style)
             
-                exchange_cell.grid(row=row, column=0, sticky="nsew", padx=2, pady=2, ipadx=5, ipady=1)
-                market_cell.grid(row=row, column=1, sticky="we", padx=2, pady=2, ipadx=5, ipady=1)
-                price_cell.grid(row=row, column=2, sticky="we", padx=2, pady=2, ipadx=5, ipady=1)
+                exchange_cell.grid(row=row, column=0, sticky="nsew", padx=cell_pad, pady=cell_pad, ipadx=5, ipady=1)
+                market_cell.grid(row=row, column=1, sticky="we", padx=cell_pad, pady=cell_pad, ipadx=5, ipady=1)
+                price_cell.grid(row=row, column=2, sticky="we", padx=cell_pad, pady=cell_pad, ipadx=5, ipady=1)
 
                 row += 1
 
