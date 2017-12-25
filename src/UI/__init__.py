@@ -1,15 +1,13 @@
 from tkinter.ttk import *
 
-theme = None
-
 # ref (on layout): https://stackoverflow.com/questions/31606881/how-to-expand-widgets-size-in-a-frame-with-respect-to-other-frames-in-tkinter-h
 
 class Dark:
 
     def __init__(self):
-        color_1 = "#333"  # background
+        color_1 = "#222"  # background
         color_3 = "#666"  # controls background
-        color_2 = "#CCC"  # foreground
+        color_2 = "#CCC"  # foreground, text
 
         self.frame_background = color_1
 
@@ -19,10 +17,19 @@ class Dark:
         self.button_background = color_3
         self.button_foreground = color_2
 
+        self.control_background = color_3
+
+        self.table_cell_background = color_1
+        self.table_cell_foreground = color_2
+
+def get_theme(theme_name:str):
+    #if theme_name == "Dark"
+    theme = Dark()
+    return theme
 
 def set_style(theme_name:str, window):
     #if theme_name == "Dark"
-    theme = Dark()    
+    theme = get_theme(theme_name)   
 
     style = Style()        
 
@@ -32,6 +39,13 @@ def set_style(theme_name:str, window):
     style.configure("TButton", background=theme.button_background, 
         highlightbackground=theme.button_background, 
         foreground=theme.button_foreground )
+    
+    style.configure("TTreeView", background=theme.control_background) # does not work
+    style.configure("table.TFrame", background=theme.control_background)
+    # font=("Helvetica", 16)
+
+    style.configure("table_cell.TLabel", background=theme.table_cell_background, foreground=theme.table_cell_foreground)
+    style.configure("table_cell.TFrame", background=theme.table_cell_background, foreground=theme.table_cell_foreground)
 
     #style.configure(f'{theme}.TButton', foreground='black', background='gray')              
     #backButton = Button(self.bottomFrame, text="Back",
@@ -40,22 +54,26 @@ def set_style(theme_name:str, window):
     #    backButton.pack(side='left')
 
 
-def create_button(container, text:str, command=None):
+def create_button(container, theme_name:str, text:str, command=None):
     ''' Create a widget Button.
     @param container: it is the widget (Frame) where to insert the button.
-    @param 
     It use the tk.Button instead of the ttk.Button because the latter cannot change the background color.
     '''
-
-    # ref (to set the bg when clicked) https://stackoverflow.com/questions/44323528/how-to-change-the-foreground-color-of-ttk-button-when-its-state-is-active
+    
+    theme = get_theme(theme_name)
 
     import tkinter
 
-    bg_color = "black" # for "Dark" theme
-
-    #if theme_name == "Dark"
-    theme = Dark()
+    # ref (to set the bg when clicked) https://stackoverflow.com/questions/44323528/how-to-change-the-foreground-color-of-ttk-button-when-its-state-is-active
 
     #return tkinter.Button(container, {"text":text, "bg":"black", "fg":"#CCCCCC"})
     return tkinter.Button(container, {"text":text, "bg":theme.button_background, "fg":theme.button_foreground }, command=command)
 
+def create_Canvas(container, theme_name:str):
+
+    theme = get_theme(theme_name)
+
+    import tkinter
+
+    # highlightthickness = 0 remove the border (borderwidth is 0 by default)
+    return tkinter.Canvas(container, background=theme.control_background, borderwidth=0, highlightthickness=0, closeenough=0, confine=0)

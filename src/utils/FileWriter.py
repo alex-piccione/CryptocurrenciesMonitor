@@ -21,10 +21,10 @@ class FileWriter:
     def _open_file(self):
         
         try:
-            #import os.path
-            #if not os.path.exists(self.file):
-            #    dir_ = os.path.dirname(self.file)
-            #    os.mkdir(dir_)
+            import os.path
+            if not os.path.exists(self.file):
+                dir_ = os.path.dirname(self.file)
+                os.mkdir(dir_)
 
             self.stream = open(self.file, 'w')
         except Exception as error:

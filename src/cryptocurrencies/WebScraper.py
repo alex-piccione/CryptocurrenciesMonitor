@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, List
 from urllib.request import urlopen
 from datetime import datetime
 from bs4 import BeautifulSoup
@@ -25,14 +25,6 @@ class WebScraper():
 
             # how to filter a dictionary https://stackoverflow.com/questions/2844516/how-to-filter-a-dictionary-according-to-an-arbitrary-condition-function
 
-            date = datetime.strftime(datetime.now(), "%Y-%m-%d %H:%M:%S")  # 'YYYY-MM-DD HH:mm:ss'
-            self.writer.write(f"Date: {date}\n")
-
-            for exchange in exchanges:
-                self.writer.write(f"\n# {exchange.name}")
-                for market in exchange.markets.values():
-                    self.writer.write(f"\t{market.name}: {market.price}")
-
             return exchanges
 
         except Exception as error:
@@ -41,7 +33,7 @@ class WebScraper():
             return 1  # Fatal error
 
 
-    def _get_exchanges(self, bs: BeautifulSoup) -> Dict[str, Exchange]:
+    def _get_exchanges(self, bs: BeautifulSoup) -> List[Exchange]:
 
         # table: <table id="markets-table" class="table no-border table-condensed">
         table = bs.find("table", {"id":"markets-table"})
@@ -62,9 +54,11 @@ class WebScraper():
             td_list = tr.find_all("td")  ## todo: try to usetr.find_all("td")[1::2]
             exchange_name = td_list[1].get_text()
             market_currencies = td_list[2].get_text()   
-
-            if ("exchanges" in self.filters and exchange_name not in self.filters["exchanges"]) or ("markets" in self.filters and market_currencies not in self.filters["markets"]):
-                continue
+            
+            if self.filters:
+                if ("exchanges" in self.filters and exchange_name not in self.filters["exchanges"]) \
+                or ("markets" in self.filters and market_currencies not in self.filters["markets"]):
+                    continue
 
             
             #usd_price = self._get_price(td_list[3])
