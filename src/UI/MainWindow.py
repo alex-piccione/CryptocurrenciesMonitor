@@ -64,8 +64,8 @@ class MainWindow:
         canvas = UI.create_Canvas(self.tk, self.theme_name,)
         canvas.grid(row=1, column=0, padx=5)        
         scrollbar = Scrollbar(self.tk, orient=VERTICAL, command=canvas.yview)
-        scrollbar.grid(row=1, column=0, sticky="nse")       # columnspan is not needed but stick the scrollbar on the right
-        frame = Frame(canvas)
+        scrollbar.grid(row=1, column=0, sticky="nse") 
+        frame = Frame(canvas, width=600)
         
         canvas.configure(yscrollcommand=scrollbar.set)
         canvas.create_window((0,0), window=frame, anchor="nw")
@@ -78,7 +78,7 @@ class MainWindow:
     def _create_bottom_bar(self):
         
         frame = Frame(self.tk)
-        frame.grid(row=2, sticky= "E", padx=5, pady=5, columnspan=3)
+        frame.grid(row=2, sticky="E", padx=5, pady=5, columnspan=3)
 
         self.refresh_button = UI.create_button(frame, self.theme_name, "Refresh", command=self._load_data)
         #pad = {"padx":10, "pady":10}
@@ -100,25 +100,30 @@ class MainWindow:
 
     def _create_prices_table(self, exchanges:Dict[str, Exchange]):
 
-        #table = Treeview(self.central_frame)
-        table = Frame(self.central_frame, style="table.TFrame")
-
-        cell_pad=0.5
+        table = Frame(self.central_frame, style="table.TFrame") 
+        #table.grid_columnconfigure(0, weight=2)
+        #table.grid_columnconfigure(1, weight=1)
+        #table.grid_columnconfigure(2, weight=1)        
 
         row = 0
         for exchange in exchanges:
             for market in exchange.markets.values():
-                if row % 2 == 0 : style = "table_cell.TLabel" 
-                else: style = "table_cell_2.TLabel" 
-                exchange_cell = Label(table, text=exchange.name, style=style)
-                market_cell = Label(table, text=market.name, style=style)
-                price_cell = Label(table, text=market.price, style=style)
-            
-                exchange_cell.grid(row=row, column=0, sticky="nsew", padx=cell_pad, pady=cell_pad, ipadx=5, ipady=1)
-                market_cell.grid(row=row, column=1, sticky="we", padx=cell_pad, pady=cell_pad, ipadx=5, ipady=1)
-                price_cell.grid(row=row, column=2, sticky="we", padx=cell_pad, pady=cell_pad, ipadx=5, ipady=1)
-
+                self._create_cell(table, row, 0, exchange.name, "w")
+                self._create_cell(table, row, 1, market.name, "w")
+                self._create_cell(table, row, 2, market.price, "e")     
                 row += 1
-
+        
         table.grid(row=0, column=0)
+
+    def _create_cell(self, table, row, column, text, sticky):
+        if row % 2 == 0 : style = ["table_cell.TFrame", "table_cell.TLabel"]
+        else: style = ["table_cell_alt.TFrame", "table_cell_alt.TLabel"]
+        cell = Frame(table, style=style[0], width=175, height=20)        
+        cell.grid_propagate(0)
+        #cell = Frame(table, style=style[0])        
+        cell.grid(row=row, column=column, sticky="nswe", padx=0.5, pady=0.5, ipadx=10)
+        cell_content = Label(cell, text=text, style=style[1])          
+        cell_content.grid(row=0, column=0, sticky="nswe", ipadx=0, ipady=1)    # this sticky does not work
+
+        
 

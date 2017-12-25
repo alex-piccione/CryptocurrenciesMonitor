@@ -23,7 +23,7 @@ class Dark:
         self.control_background = color_3
 
         self.table_cell_background = color_4
-        self.table_cell_background_2 = color_5
+        self.table_cell_background_alt = color_5
         self.table_cell_foreground = color_2
 
 def get_theme(theme_name:str):
@@ -45,13 +45,15 @@ def set_style(theme_name:str, window):
         foreground=theme.button_foreground )
     
     style.configure("TTreeView", background=theme.control_background) # does not work
+
+    # table
     style.configure("table.TFrame", background=theme.control_background)
-    # font=("Helvetica", 16)
-
+    style.configure("table_cell.TFrame", background=theme.table_cell_background)
+    style.configure("table_cell_alt.TFrame", background=theme.table_cell_background_alt)
     style.configure("table_cell.TLabel", background=theme.table_cell_background, foreground=theme.table_cell_foreground)
-    style.configure("table_cell_2.TLabel", background=theme.table_cell_background_2, foreground=theme.table_cell_foreground) # alternate
-    style.configure("table_cell.TFrame", background=theme.table_cell_background, foreground=theme.table_cell_foreground)
-
+    style.configure("table_cell_alt.TLabel", background=theme.table_cell_background_alt, foreground=theme.table_cell_foreground) # alternate
+    
+    # font=("Helvetica", 16)
     #style.configure(f'{theme}.TButton', foreground='black', background='gray')              
     #backButton = Button(self.bottomFrame, text="Back",
     #    command=lambda: controller.ShowFrame("StartPage"),  
