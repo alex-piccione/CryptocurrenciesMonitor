@@ -92,7 +92,7 @@ class MainWindow:
 
         filters = {
             "exchanges": self.configuration.exchanges,
-            "markets": ["XRP/USD", "XRP/BTC", "XRP/ETH", "XRP/LTC", "XLM/BTC"]
+            "markets": self.configuration.markets,
         }
 
         data:List[Exchange] = self.scraper.get_data(filters)
