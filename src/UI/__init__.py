@@ -6,7 +6,7 @@ class Dark:
 
     def __init__(self):
         color_1 = "#1F1F1F"  # background
-        color_3 = "#666"  # controls background
+        color_3 = "#444"  # controls background
         color_2 = "#CCC"  # foreground, text
 
         color_4 = "#292929"
@@ -74,7 +74,9 @@ def create_button(container, theme_name:str, text:str, command=None):
     # ref (to set the bg when clicked) https://stackoverflow.com/questions/44323528/how-to-change-the-foreground-color-of-ttk-button-when-its-state-is-active
 
     #return tkinter.Button(container, {"text":text, "bg":"black", "fg":"#CCCCCC"})
-    return tkinter.Button(container, {"text":text, "bg":theme.button_background, "fg":theme.button_foreground }, command=command)
+    return tkinter.Button(container, {"text":text, "bg":theme.button_background, "fg":theme.button_foreground, 
+        "relief": tkinter.FLAT
+    }, command=command)
 
 def create_Canvas(container, theme_name:str):
 

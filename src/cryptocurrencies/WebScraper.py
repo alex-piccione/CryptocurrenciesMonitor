@@ -12,6 +12,12 @@ class WebScraper():
     def __init__(self, writer:FileWriter) -> Dict[str, Exchange]:
         self.writer = writer
 
+    def get_markets(self) -> List[Market]:
+
+        # todo
+        return ["XRP/BTC", "LTC/BTC"];
+
+
     def get_data(self, filters=None) :
 
         try:
