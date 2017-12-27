@@ -20,11 +20,13 @@ class FileWriter:
 
     def _open_file(self):
         
+        import os.path
+        
         try:
-            import os.path
             if not os.path.exists(self.file):
                 dir_ = os.path.dirname(self.file)
-                os.mkdir(dir_)
+                if not os.path.exists(dir_):
+                    os.mkdir(dir_)
 
             self.stream = open(self.file, 'w')
         except Exception as error:
