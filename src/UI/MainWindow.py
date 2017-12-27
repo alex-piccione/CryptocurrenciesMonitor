@@ -2,13 +2,12 @@ from typing import Dict, List
 from tkinter import *
 from tkinter.ttk import *
 
+import UI
 from UI.Configuration import Configuration
+from UI.TkinterHelper import TkinterHelper
 from utils.FileWriter import FileWriter
 from cryptocurrencies import WebScraper
-from cryptocurrencies.entities import Exchange, Market
-
-import UI
-from UI.TkinterHelper import TkinterHelper
+from cryptocurrencies.entities import *
 
 
 class MainWindow:
@@ -30,6 +29,7 @@ class MainWindow:
         self._load_prices()
         self.tk.mainloop()
 
+
     def _quit(self):
         self.tk.quit()
 
@@ -38,7 +38,7 @@ class MainWindow:
         
         UI.set_style(self.theme_name, self.tk)
         
-        self.markets = self.scraper.get_markets()
+        self.currency_pairs: List[CurrencyPair] = self.scraper.get_currency_pairs()
         #self.exchanges = self.scraper.get_exchanges()
 
         # top frame
@@ -50,6 +50,7 @@ class MainWindow:
         # bottom buttons
         self._create_bottom_bar()
 
+
     def _create_top_frame(self):
         frame = Frame(self.tk)
         frame.grid(row=0, column=0, sticky=W, padx=5, pady=5,)
@@ -57,26 +58,27 @@ class MainWindow:
         self.filter_markets = {}
 
         column = 0
-        for market in self.markets:
-            selected = market in self.configuration.markets
+        for pair in self.currency_pairs:
+            selected = pair.name in self.configuration.currency_pairs
 
             if selected: image = self.helper.image_label_select_on
             else: image = self.helper.image_label_select_off
 
-            button = Label(frame, image=image, text=market, compound="left")           
-            button.image = image    # ridiculous: http://effbot.org/pyfaq/why-do-my-tkinter-images-not-appear.htm                        
-            button.bind("<Button-1>", self._change_market_selection)
-            button.grid(row=0, column=column)
+            if selected: # show only selected currency pairs because them are too many
+                button = Label(frame, image=image, text=pair.name, compound="left")           
+                button.image = image    # ridiculous: http://effbot.org/pyfaq/why-do-my-tkinter-images-not-appear.htm                        
+                button.bind("<Button-1>", self._change_market_selection)
+                button.grid(row=0, column=column)
 
-            button.market = market
-            button.selected = selected
-            self.filter_markets[market] = selected
+                button.pair_name = pair.name
+                button.selected = selected
+                self.filter_markets[pair.name] = selected
 
-            column += 1           
+                column += 1           
     
 
     def _change_market_selection(self, event):
-        market = event.widget.market
+        pair_name = event.widget.pair_name
         if event.widget.selected:
             selected = False
             image = self.helper.image_label_select_off
@@ -88,8 +90,9 @@ class MainWindow:
         event.widget.image = image
         event.widget.selected = selected
 
-        self.filter_markets[market] = selected
+        self.filter_markets[pair_name] = selected
         # self._refresh_prices()
+
 
     def _create_central_frame(self):
 
@@ -112,6 +115,7 @@ class MainWindow:
 
         self.central_frame = frame # set it visible
 
+
     def _create_bottom_bar(self):
         
         frame = Frame(self.tk)
@@ -124,16 +128,18 @@ class MainWindow:
         quit_button = UI.create_button(frame, self.theme_name, text="Quit", command=self._quit)
         quit_button.grid(row=0, column=1, sticky=SE, padx=5, pady=5, ipadx=10)
 
+
     def _load_prices(self):
 
         filters = {
             "exchanges": self.configuration.exchanges,
-            "markets": self.configuration.markets,
+            "currency pairs": self.configuration.currency_pairs,
         }
 
         data:List[Exchange] = self.scraper.get_data(filters)
 
         self._create_prices_table(data)
+
 
     def _create_prices_table(self, exchanges:Dict[str, Exchange]):
 

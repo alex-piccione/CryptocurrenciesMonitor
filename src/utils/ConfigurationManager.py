@@ -6,5 +6,5 @@ class ConfigurationManager:
     def load_configuration():
 
         return Configuration(exchanges=["Gatehub", "Bitstamp", "Gate.io", "Binance", "Bitfinex"],
-            markets=["XRP/USD", "XRP/BTC", "XRP/ETH", "XRP/LTC", "XLM/BTC"]
+            currency_pairs=["XRP/USD", "XRP/BTC", "XRP/ETH", "XRP/LTC", "XLM/BTC"]
         )

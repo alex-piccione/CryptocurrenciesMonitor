@@ -4,24 +4,59 @@ from datetime import datetime
 from bs4 import BeautifulSoup
 
 from utils.FileWriter import FileWriter
-from cryptocurrencies.entities import Exchange, Market
+from cryptocurrencies.entities import *
+
+url_coinmarketcap = "https://coinmarketcap.com" # used to obtain the list of Currencies, Exchanges, Markets
 
 
 class WebScraper():
 
     def __init__(self, writer:FileWriter) -> Dict[str, Exchange]:
-        self.writer = writer
+        self.writer = writer  
+        self.currencies = None      
 
-    def get_markets(self) -> List[Market]:
 
-        # todo
-        return ["XRP/BTC", "LTC/BTC"];
+    def get_currency_pairs(self) -> List[str]:
+
+        # todo: return data from cache/configuration then generate an update event when the load of fresh data contains changes
+        ##return self._genearete_currency_pairs(currencies_from_cache)
+
+        # load the currencies
+        currencies = {}
+        try:
+            # todo: 
+            response = urlopen(url_coinmarketcap) 
+            bs = BeautifulSoup(response, "html5lib")
+
+            # <table class="table dataTable no-footer" id="currencies" role="grid" style="width: 100%;">
+            table = bs.find("table", {"id":"currencies"})
+
+            # <span class="currency-symbol"><a href="/currencies/bitcoin/">BTC</a></span>
+            # <a class="currency-name-container" href="/currencies/bitcoin/">Bitcoin</a>
+            for row in table.tbody.find_all("tr"):                
+                symbol = row.find(class_="currency-symbol").get_text().upper() # upper case
+                name = row.find(class_="currency-name-container").get_text()
+                if symbol in currencies.keys():
+                    self._log(f"Duplicated currency found. Symbol: {symbol}. Name: {name}. Skip it.")
+                    continue
+
+                currency = Currency(symbol, name)
+                currencies[symbol] = currency
+
+            self.currencies = currencies
+
+        except Exception as error:
+            self._log(f"Fail to load currencies. Error: {error}")
+            raise Exception(f"Fail to load currencies. Error: {error}")
+
+        # create the pairs
+        return self._generate_currency_pairs()
 
 
     def get_data(self, filters=None) :
 
         try:
-            base_url = "https://coinmarketcap.com"
+            base_url = url_coinmarketcap
             url = f"{base_url}/currencies/ripple/#markets"
             response = urlopen(url)
             bs = BeautifulSoup(response, "html5lib")
@@ -36,6 +71,30 @@ class WebScraper():
             self.writer.write(f"Error in {__name__}. {error}")
             print(f"Error in {__name__}. {error}")
             return 1  # Fatal error
+
+
+    def _log(self, message):
+        self.writer.write(message)
+
+
+    def _generate_currency_pairs(self) -> List[CurrencyPair]:
+        """ 
+        From the currencies A,B,C generate A/B, A/C, B/C.
+        The priority between the 2 possible direction of a pair is not defined.
+        """
+
+        pairs = []
+
+        index = 1
+        currencies = list(self.currencies.keys())
+        for currency_a in currencies:
+            for currency_b in currencies[index:]:
+                if currency_a != currency_b:
+                    pair = CurrencyPair(currency_a, currency_b)
+                    pairs.append(pair)
+            index += 1
+
+        return pairs
 
 
     def _get_exchanges(self, bs: BeautifulSoup, filters) -> List[Exchange]:
@@ -62,7 +121,7 @@ class WebScraper():
             
             if filters:
                 if ("exchanges" in filters and exchange_name not in filters["exchanges"]) \
-                or ("markets" in filters and market_currencies not in filters["markets"]):
+                or ("currency pairs" in filters and market_currencies not in filters["currency pairs"]):
                     continue
 
             

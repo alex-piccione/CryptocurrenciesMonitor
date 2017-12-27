@@ -86,4 +86,3 @@ def create_Canvas(container, theme_name:str):
 
     # highlightthickness=0 remove the border (borderwidth is 0 by default)
     return tkinter.Canvas(container, background=theme.control_background, borderwidth=0, highlightthickness=0, closeenough=0)
-    

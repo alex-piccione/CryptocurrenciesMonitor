@@ -1,4 +1,4 @@
-
+#from cryptocurrencies.FIATcurrencies import list as fiat_criptocurrencies
 
 class Exchange():
 
@@ -12,8 +12,12 @@ class Exchange():
         
         self.markets[market.name] = market
 
-
+# TODO: modify it to bind it ti an Exchange
 class Market():
+    ''' 
+    Represents a pair of currencies and its price.
+    Should be modified to comprehend the Exchange and use the CurrencyPair
+    '''
 
     def __init__(self, currency_main, currency_base, price:float):
         '''
@@ -38,4 +42,47 @@ class Market():
                 raise Exception(f"Fail to parse market from {market_currencies}")
         except Exception as err:
             raise Exception(f"Fail to parse market from {market_currencies}")
+
+
+class CurrencyPair():
+    """ Represent a pair of currencies that can """
+
+    def __init__(self, currency_main:str, currency_base:str):
+        '''
+        @param currency_main is tha AAA in AAA/BBB
+        @param currency_base is tha BBB in AAA/BBB
+        '''
+        self.currency_main = currency_main
+        self.currency_base = currency_base
+        self.name = f"{currency_main}/{currency_base}"
+
+    def parse(currencies:str):
+        '''
+        Create a CurrencyPair from a text like"AAA/BBB".
+        '''
+        
+        try:
+            currencies = market_currencies.split("/")
+            if len(currencies) == 2:
+                return CurrencyPair(currencies[0], currencies[1])
+            else:
+                raise Exception(f"Fail to parse market from {currencies}")
+        except Exception as err:
+            raise Exception(f"Fail to parse market from {currencies}")
+
+
+
+class Currency():
+
+    def __init__(self, name, symbol):
+        """
+        @param fiat (boolean): indicates if is a FIAT currency
+        """
+
+        from cryptocurrencies import FIAT_currencies
+
+        self.name = name
+        self.symbol = symbol
+        self.fiat = symbol in FIAT_currencies.list
+
 

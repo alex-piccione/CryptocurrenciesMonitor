@@ -1,4 +1,4 @@
-fiat_currencies = [
+list = [
     "BDT", "CUP", "GGP", "BGN", "KES", "BAM", "CZK", "ARS", "LBP", "USD", 
     "PYG", "UAH", "TTD", "IDR", "EGP", "BMD", "LKR", "PLN", "SHP", "VEF", 
     "BOB", "GBP", "GIP", "LAK", "IMP", "SYP", "BTN", "HTG", "AZN", "PKR", 

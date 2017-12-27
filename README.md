@@ -29,6 +29,7 @@ This folder contains the working code of the Web Scraping lesson.
 - create a .exe Windows file
 - Web page where download the application
 - auto update the application
+- avoid to wait the laoding of currencies and exchanges on every start, use a previous cached list and update it when load finished.
 
 
 ## REsources
