@@ -1,4 +1,5 @@
 from typing import Dict, List
+from threading import Thread
 from tkinter import *
 from tkinter.ttk import *
 
@@ -26,6 +27,8 @@ class MainWindow:
         self.tk.resizable(False, False)
         self.tk.bind("<Escape>", self._quit )
         
+        self.refresh_button = None
+
         self._create_ui()
         self._load_prices()
         self.tk.mainloop()
@@ -105,7 +108,7 @@ class MainWindow:
     def _create_central_frame(self):
 
         table_width = 600
-        table_height = 200
+        table_height = 600
 
         # ScrollBar cannot be associated to root widget and Frame, using canvas is the common solution
         canvas = UI.create_Canvas(self.tk, self.theme_name)
@@ -137,16 +140,31 @@ class MainWindow:
         quit_button.grid(row=0, column=1, sticky=SE, padx=5, pady=5, ipadx=10)
 
 
-    def _load_prices(self):
+    def _load_prices(self):     
+        t = Thread(target=self.__load_prices)
+        t.start()
 
-        filters = {
-            "exchanges": self.configuration.exchanges,
-            "currency pairs": self.configuration.currency_pairs,
-        }
 
-        data:List[Exchange] = self.scraper.get_data(filters)
+    def __load_prices(self):
 
-        self._create_prices_table(data)
+        UI.disable_button(self.refresh_button, self.theme_name)
+        try:
+            filters = {
+                "exchanges": self.configuration.exchanges,
+                "currency pairs": self.configuration.currency_pairs,
+            }
+
+            exchanges:List[Exchange] = self.scraper.get_data(filters)
+        except Exception as error:
+            self.writer.writer(f"Fail to load prices. {error}")
+
+        UI.enable_button(self.refresh_button, self.theme_name)
+
+        self.__load_prices_completed(exchanges)
+
+
+    def __load_prices_completed(self, exchanges: List[Exchange]):
+        self._create_prices_table(exchanges)
 
 
     def _create_prices_table(self, exchanges:Dict[str, Exchange]):
@@ -165,6 +183,7 @@ class MainWindow:
                 row += 1
         
         table.grid(row=0, column=0)
+
 
     def _create_cell(self, table, row, column, text, sticky):
         if row % 2 == 0 : style = ["table_cell.TFrame", "table_cell.TLabel"]

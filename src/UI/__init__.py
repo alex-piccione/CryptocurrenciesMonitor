@@ -19,6 +19,8 @@ class Dark:
 
         self.button_background = color_3
         self.button_foreground = color_2
+        self.button_background_disabled = color_4
+        self.button_foreground_disabled = color_3
 
         self.control_background = color_3
 
@@ -86,3 +88,12 @@ def create_Canvas(container, theme_name:str):
 
     # highlightthickness=0 remove the border (borderwidth is 0 by default)
     return tkinter.Canvas(container, background=theme.control_background, borderwidth=0, highlightthickness=0, closeenough=0)
+
+def disable_button(button, theme_name:str):
+    theme = get_theme(theme_name)
+    button.configure({"bg": theme.button_background_disabled, "fg": theme.button_foreground_disabled})
+    #button.configure({"bg": theme.button_background_disabled})
+
+def enable_button(button, theme_name:str):
+    theme = get_theme(theme_name)
+    button.configure({"bg": theme.button_background, "fg": theme.button_foreground})
