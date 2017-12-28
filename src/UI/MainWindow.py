@@ -32,11 +32,14 @@ class MainWindow:
 
         # tasks monitors
         self.load_price_running = False
+        self.request_quit = False
 
         # auto refresh
         self.refresh_scheduler = None
         self.auto_refresh = True
-        self.refresh_interval = 20 # seconds
+        self.refresh_interval = 10 # seconds
+
+        self._load_data() # needed by _create_ui()
 
         self._create_ui()
         self._load_prices()
@@ -44,17 +47,14 @@ class MainWindow:
 
 
     def _quit(self):
+        self.request_quit = True
         self.tk.quit()
 
 
     def _create_ui(self):
         
-        UI.set_style(self.theme_name, self.tk)
-       
-        self._load_data()
+        UI.set_style(self.theme_name, self.tk)    
         
-        self._set_autorefresh()
-
         # top frame
         self._create_top_frame()
 
@@ -159,7 +159,7 @@ class MainWindow:
 
     def _load_prices(self):  
 
-        if self.load_price_running:
+        if self.load_price_running or self.request_quit:
             return
            
         t = Thread(target=self.__load_prices)
@@ -168,8 +168,8 @@ class MainWindow:
 
     def __load_prices(self):
 
-        if self.load_price_running:
-            self._set_autorefresh()
+        if self.load_price_running or self.request_quit:
+            return
 
         self.load_price_running = True
 
@@ -217,7 +217,7 @@ class MainWindow:
 
     def _create_cell(self, table, row, column, text, sticky):
         if row % 2 == 0 : style = ["table_cell.TFrame", "table_cell.TLabel"]
-        else: style = ["table_cell_alt.TFrame", "table_cell_alt.TLabel"]
+        else: style = ["table_cell_alternate.TFrame", "table_cell_alternate.TLabel"]
         cell = Frame(table, style=style[0], width=180, height=25)        
         cell.grid_propagate(0)
         #cell = Frame(table, style=style[0])        
