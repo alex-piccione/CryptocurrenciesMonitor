@@ -4,6 +4,7 @@ from datetime import datetime
 from bs4 import BeautifulSoup
 
 from utils.FileWriter import FileWriter
+from cryptocurrencies import currencies_utils
 from cryptocurrencies.entities import *
 
 url_coinmarketcap = "https://coinmarketcap.com" # used to obtain the list of Currencies, Exchanges, Markets
@@ -13,7 +14,6 @@ class WebScraper():
 
     def __init__(self, writer:FileWriter) -> Dict[str, Exchange]:
         self.writer = writer  
-        self.currencies = None      
 
 
     def get_currency_pairs(self) -> List[str]:
@@ -43,14 +43,12 @@ class WebScraper():
                 currency = Currency(symbol, name)
                 currencies[symbol] = currency
 
-            self.currencies = currencies
-
         except Exception as error:
             self._log(f"Fail to load currencies. Error: {error}")
             raise Exception(f"Fail to load currencies. Error: {error}")
 
         # create the pairs
-        return self._generate_currency_pairs()
+        return currencies_utils.generate_currency_pairs(list(currencies.values()))
 
 
     def get_data(self, filters=None) :
@@ -76,25 +74,6 @@ class WebScraper():
     def _log(self, message):
         self.writer.write(message)
 
-
-    def _generate_currency_pairs(self) -> List[CurrencyPair]:
-        """ 
-        From the currencies A,B,C generate A/B, A/C, B/C.
-        The priority between the 2 possible direction of a pair is not defined.
-        """
-
-        pairs = []
-
-        index = 1
-        currencies = list(self.currencies.keys())
-        for currency_a in currencies:
-            for currency_b in currencies[index:]:
-                if currency_a != currency_b:
-                    pair = CurrencyPair(currency_a, currency_b)
-                    pairs.append(pair)
-            index += 1
-
-        return pairs
 
 
     def _get_exchanges(self, bs: BeautifulSoup, filters) -> List[Exchange]:

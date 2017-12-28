@@ -6,8 +6,9 @@ import UI
 from UI.Configuration import Configuration
 from UI.TkinterHelper import TkinterHelper
 from utils.FileWriter import FileWriter
-from cryptocurrencies import WebScraper
+from cryptocurrencies import WebScraper, currencies_utils
 from cryptocurrencies.entities import *
+
 
 
 class MainWindow:
@@ -38,8 +39,7 @@ class MainWindow:
         
         UI.set_style(self.theme_name, self.tk)
         
-        self.currency_pairs: List[CurrencyPair] = self.scraper.get_currency_pairs()
-        #self.exchanges = self.scraper.get_exchanges()
+        self._load_data()
 
         # top frame
         self._create_top_frame()
@@ -49,6 +49,14 @@ class MainWindow:
 
         # bottom buttons
         self._create_bottom_bar()
+
+
+    def _load_data(self):
+
+        self.currency_pairs = currencies_utils.generate_currency_pairs(self.configuration.currencies)
+
+        # todo: load asynchronously and generate an event
+        #self.currency_pairs: List[CurrencyPair] = self.scraper.get_currency_pairs()
 
 
     def _create_top_frame(self):
