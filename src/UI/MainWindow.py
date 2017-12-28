@@ -1,5 +1,5 @@
 from typing import Dict, List
-from threading import Thread
+from threading import Thread, Timer
 from tkinter import *
 from tkinter.ttk import *
 
@@ -27,7 +27,16 @@ class MainWindow:
         self.tk.resizable(False, False)
         self.tk.bind("<Escape>", self._quit )
         
+        # buttons
         self.refresh_button = None
+
+        # tasks monitors
+        self.load_price_running = False
+
+        # auto refresh
+        self.refresh_scheduler = None
+        self.auto_refresh = True
+        self.refresh_interval = 20 # seconds
 
         self._create_ui()
         self._load_prices()
@@ -41,8 +50,10 @@ class MainWindow:
     def _create_ui(self):
         
         UI.set_style(self.theme_name, self.tk)
-        
+       
         self._load_data()
+        
+        self._set_autorefresh()
 
         # top frame
         self._create_top_frame()
@@ -60,6 +71,12 @@ class MainWindow:
 
         # todo: load asynchronously and generate an event
         #self.currency_pairs: List[CurrencyPair] = self.scraper.get_currency_pairs()
+
+
+    def _set_autorefresh(self):
+        if self.auto_refresh:
+            self.refresh_scheduler = Timer(self.refresh_interval, self._load_prices)
+            self.refresh_scheduler.start()
 
 
     def _create_top_frame(self):
@@ -140,12 +157,21 @@ class MainWindow:
         quit_button.grid(row=0, column=1, sticky=SE, padx=5, pady=5, ipadx=10)
 
 
-    def _load_prices(self):     
+    def _load_prices(self):  
+
+        if self.load_price_running:
+            return
+           
         t = Thread(target=self.__load_prices)
         t.start()
 
 
     def __load_prices(self):
+
+        if self.load_price_running:
+            self._set_autorefresh()
+
+        self.load_price_running = True
 
         UI.disable_button(self.refresh_button, self.theme_name)
         try:
@@ -160,7 +186,11 @@ class MainWindow:
 
         UI.enable_button(self.refresh_button, self.theme_name)
 
+        self.load_price_running = False
+
         self.__load_prices_completed(exchanges)
+        
+        self._set_autorefresh()
 
 
     def __load_prices_completed(self, exchanges: List[Exchange]):
