@@ -51,11 +51,11 @@ class WebScraper():
         return currencies_utils.generate_currency_pairs(list(currencies.values()))
 
 
-    def get_data(self, filters=None) :
+    def get_market_prices(self, currency_name, filters=None) :
 
         try:
             base_url = url_coinmarketcap
-            url = f"{base_url}/currencies/ripple/#markets"
+            url = f"{base_url}/currencies/{currency_name}/#markets"
             response = urlopen(url)
             bs = BeautifulSoup(response, "html5lib")
 

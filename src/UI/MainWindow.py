@@ -131,7 +131,8 @@ class MainWindow:
         canvas = UI.create_Canvas(self.tk, self.theme_name)
         canvas.grid(row=1, column=0, padx=5)             
         scrollbar = Scrollbar(self.tk, orient=VERTICAL, command=canvas.yview)
-        scrollbar.grid(row=1, column=1, sticky="nse")         
+        #scrollbar = TkinterHelper.create_Scrollbar(self.tk, orient=VERTICAL, command=canvas.yview)
+        scrollbar.grid(row=1, column=1, sticky="nse")  
         frame = Frame(canvas)
          
         canvas.configure(yscrollcommand=scrollbar.set)
@@ -179,8 +180,10 @@ class MainWindow:
                 "exchanges": self.configuration.exchanges,
                 "currency pairs": self.configuration.currency_pairs,
             }
-
-            exchanges:List[Exchange] = self.scraper.get_data(filters)
+            currency_name = "ripple"
+            currency_name = "litecoin"
+            currency_name = "bitcoin"
+            exchanges:List[Exchange] = self.scraper.get_market_prices(currency_name, filters)
         except Exception as error:
             self.writer.writer(f"Fail to load prices. {error}")
 

@@ -5,6 +5,7 @@ from tkinter.ttk import *
 class Dark:
 
     def __init__(self):
+        color_00 = "#0F0F0F"  # window background
         color_01 = "#0F0F0F"  # background
         color_11 = "#151515"  # background alternate
         color_03 = "#444"  # controls background
@@ -16,6 +17,9 @@ class Dark:
         color_07 = "#e65c00"     # active
         color_17 = "#cc5200"     # active alternate
 
+        
+        self.window_background = color_00
+        self.canvas_background = color_00
         self.frame_background = color_01
         self.control_background = color_11
 
@@ -28,10 +32,14 @@ class Dark:
         self.button_foreground_disabled = color_03        
         self.button_background_active = color_07
 
-
+        self.table_background = color_11
         self.table_cell_background = color_04
         self.table_cell_background_alternate = color_14
         self.table_cell_foreground = color_02
+
+        self.scrollbar_background = color_11
+        self.scrollbar_background_active = color_07
+
 
 def get_theme(theme_name:str):
     #if theme_name == "Dark"
@@ -50,16 +58,22 @@ def set_style(theme_name:str, window):
     style.configure("TButton", background=theme.button_background, 
         highlightbackground=theme.button_background, 
         foreground=theme.button_foreground )
-    
-    style.configure("TTreeView", background=theme.control_background) # does not work
 
     # table
-    style.configure("table.TFrame", background=theme.control_background)
+    style.configure("table.TFrame", background=theme.table_background)
     style.configure("table_cell.TFrame", background=theme.table_cell_background)
     style.configure("table_cell_alternate.TFrame", background=theme.table_cell_background_alternate)
     style.configure("table_cell.TLabel", background=theme.table_cell_background, foreground=theme.table_cell_foreground)
     style.configure("table_cell_alternate.TLabel", background=theme.table_cell_background_alternate, foreground=theme.table_cell_foreground) # alternate
     
+    # Scrollbar
+    # refs: http://effbot.org/tkinterbook/button.htm
+    #       http://infohost.nmt.edu/tcc/help/pubs/tkinter/web/scrollbar.html
+    # good example: https://stackoverflow.com/questions/28375591/changing-the-appearance-of-a-scrollbar-in-tkinter-using-ttk-styles
+    #style.configure("Vertical.TScrollbar", background=theme.scrollbar_background, activebackground=theme.scrollbar_background_active)
+
+
+
     # font=("Helvetica", 16)
     #style.configure(f'{theme}.TButton', foreground='black', background='gray')              
     #backButton = Button(self.bottomFrame, text="Back",
