@@ -11,5 +11,5 @@ class ConfigurationManager:
                 	"LTC/USD", "LTC/XRP", "LTC/EUR",
                     "BTC/USD", "BTC/EUR", "BtC/XRP"
                 ],
-            exchanges = ["Gatehub", "Bitstamp", "Gate.io", "Binance", "Bitfinex", "Coinbase", "Bithumb"]            
+            exchanges = ["Gatehub", "Bitstamp", "Gate.io", "Binance", "Bitfinex", "Coinbase", "Bithumb"]
         )

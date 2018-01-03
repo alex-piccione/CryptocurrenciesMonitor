@@ -68,7 +68,6 @@ class WebScraper():
         except Exception as error:
             self.writer.write(f"Error in {__name__}. {error}")
             print(f"Error in {__name__}. {error}")
-            return 1  # Fatal error
 
 
     def _log(self, message):

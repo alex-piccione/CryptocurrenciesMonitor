@@ -74,15 +74,16 @@ class CurrencyPair():
 
 class Currency():
 
-    def __init__(self, name, symbol):
+    def __init__(self, name, code):
         """
-        @param fiat (boolean): indicates if is a FIAT currency
+        @param name (string): Name of the currency (Bitcoin, Ripple, Cardano ...) 
+        @param code (string): 3 letters ISO code
         """
 
         from cryptocurrencies import FIAT_currencies
 
         self.name = name
-        self.symbol = symbol
-        self.fiat = symbol in FIAT_currencies.list
+        self.symbol = code
+        self.fiat = code in FIAT_currencies.list  # indicates if is a FIAT currency
 
 
