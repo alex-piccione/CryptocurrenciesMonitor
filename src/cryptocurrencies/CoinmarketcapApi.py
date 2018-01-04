@@ -3,8 +3,7 @@ import requests
 from cryptocurrencies.entities import Currency
 
 # API documentation: "https://coinmarketcap.com/api"
-api_url = "https://api.coinmarketcap.com/v1/ticker"
-
+api_url = "https://api.coinmarketcap.com/v1"
 
 
 class CoinmarketcapApi():
@@ -15,7 +14,7 @@ class CoinmarketcapApi():
         currencies = []
 
         try:
-            response = requests.get(f"{api_url}?limit=50") # limit to 50 top ranked coins
+            response = requests.get(f"{api_url}/ticker?limit=50") # limit to 50 top ranked coins
             if response.status_code != 200:
                 raise Exception(f"GET request fail. Status code: {response.status_code}. Reason: {response.reason}")
 

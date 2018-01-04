@@ -68,10 +68,11 @@ class MainWindow:
     def _load_data(self):
         from cryptocurrencies.CoinmarketcapApi import CoinmarketcapApi
 
+        # self.currency_pairs = currencies_utils.generate_currency_pairs(self.configuration.currencies)
+        
         currencies = CoinmarketcapApi().get_currencies()
+        currencies = list( filter(lambda x: x.symbol in self.configuration.currencies, currencies) )
         self.currency_pairs = currencies_utils.generate_currency_pairs(currencies)
-
-        #self.currency_pairs = currencies_utils.generate_currency_pairs(self.configuration.currencies)
 
         # todo: load asynchronously and generate an event
         #self.currency_pairs: List[CurrencyPair] = self.scraper.get_currency_pairs()
