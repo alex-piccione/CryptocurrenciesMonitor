@@ -70,9 +70,9 @@ class MainWindow:
 
         # self.currency_pairs = currencies_utils.generate_currency_pairs(self.configuration.currencies)
         
-        currencies = CoinmarketcapApi().get_currencies()
-        currencies = list( filter(lambda x: x.symbol in self.configuration.currencies, currencies) )
-        self.currency_pairs = currencies_utils.generate_currency_pairs(currencies)
+        currencies:List[Currency] = CoinmarketcapApi().get_currencies()
+        currencies = list( filter(lambda x: x.code in self.configuration.currencies, currencies) )
+        self.currency_pairs:List[CurrencyPair] = currencies_utils.generate_currency_pairs(currencies)
 
         # todo: load asynchronously and generate an event
         #self.currency_pairs: List[CurrencyPair] = self.scraper.get_currency_pairs()
@@ -91,6 +91,7 @@ class MainWindow:
         self.filter_markets = {}
 
         column = 0
+        
         for pair in self.currency_pairs:
             selected = pair.name in self.configuration.currency_pairs
 

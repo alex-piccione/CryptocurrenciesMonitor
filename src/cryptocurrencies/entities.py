@@ -52,6 +52,10 @@ class CurrencyPair():
         @param currency_main is tha AAA in AAA/BBB
         @param currency_base is tha BBB in AAA/BBB
         '''
+
+        assert isinstance(currency_main, str)
+        assert isinstance(currency_base, str)
+
         self.currency_main = currency_main
         self.currency_base = currency_base
         self.name = f"{currency_main}/{currency_base}"
@@ -83,7 +87,9 @@ class Currency():
         from cryptocurrencies import FIAT_currencies
 
         self.name = name
-        self.symbol = code
+        # deprecated
+        self.symbol = code  # symbol will be removed
+        self.code = code
         self.fiat = code in FIAT_currencies.list  # indicates if is a FIAT currency
 
 

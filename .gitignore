@@ -2,3 +2,4 @@
 **/__pycache__/
 src/UI/images/unused
 src/output/
+.idea/
